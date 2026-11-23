@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif;
+    background: #ffffff; color: #37352f;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #191919; color: #e6e6e6; }
+  }
+  #date { font-size: clamp(14px, 4.5vw, 22px); opacity: .7; letter-spacing: .02em; }
+  #time { font-size: clamp(36px, 16vw, 88px); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  #ampm { font-size: .35em; font-weight: 500; margin-right: .25em; opacity: .7; }
+</style>
+</head>
+<body>
+  <div id="date"></div>
+  <div id="time"></div>
+<script>
+  const TZ = 'Asia/Seoul';
+  const dateFmt = new Intl.DateTimeFormat('ko-KR', { timeZone: TZ, year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+  const timeFmt = new Intl.DateTimeFormat('ko-KR', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  function tick() {
+    const now = new Date();
+    document.getElementById('date').textContent = dateFmt.format(now);
+    const parts = timeFmt.formatToParts(now);
+    const get = t => (parts.find(p => p.type === t) || {}).value || '';
+    document.getElementById('time').innerHTML =
+      '<span id="ampm">' + get('dayPeriod') + '</span>' + get('hour') + ':' + get('minute') + ':' + get('second');
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
